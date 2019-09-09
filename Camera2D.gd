@@ -5,5 +5,6 @@ func _ready():
 	pass
 
 
-
+func _process():
+	pass
 

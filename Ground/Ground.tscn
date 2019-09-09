@@ -3,18 +3,20 @@
 [ext_resource path="res://assets/ground/pngs/Tileset_ground.png" type="Texture" id=1]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 55.9743, 12.3801 )
+extents = Vector2( 106.153, 12.6962 )
 
 [node name="Ground" type="Node2D"]
-position = Vector2( 386.874, 1206.13 )
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="Tileset_ground" type="Sprite" parent="."]
 texture = ExtResource( 1 )
+offset = Vector2( 50, 0 )
+
+[node name="Tileset_ground2" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+offset = Vector2( -50, 0 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
+editor/display_folded = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 shape = SubResource( 1 )

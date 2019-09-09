@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Player.gd" type="Script" id=1]
+[ext_resource path="res://Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://assets/player/svgs/stand.svg" type="Texture" id=2]
+[ext_resource path="res://assets/player/svgs/jump.svg" type="Texture" id=3]
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
@@ -10,31 +11,31 @@ animations = [ {
 "name": "default",
 "speed": 5.0
 }, {
-"frames": [  ],
+"frames": [ ExtResource( 3 ) ],
 "loop": true,
 "name": "jump",
 "speed": 5.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 115.373, 254.802 )
+extents = Vector2( 129.419, 254.802 )
 
 [node name="Player" type="Node2D"]
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+position = Vector2( 14, 0 )
 frames = SubResource( 1 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+limit_bottom = 100
+limit_smoothed = true
 
 [node name="RigidBody2D" type="RigidBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
 shape = SubResource( 2 )
-
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 7.70581, 15.4116 )
-current = true
-limit_left = 0
-limit_right = 1000
-limit_bottom = 100
-limit_smoothed = true
-smoothing_enabled = true

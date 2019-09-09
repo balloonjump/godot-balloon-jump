@@ -16,16 +16,16 @@ _global_script_class_icons={
 [application]
 
 config/name="BalloonJump"
-run/main_scene="res://Main.tscn"
+run/main_scene="res://Main/Main.tscn"
 config/icon="res://icon.png"
 
 [display]
 
-window/size/width=1000
-window/size/height=1280
+window/size/width=512
+window/size/height=1080
 window/handheld/orientation="portrait"
 window/stretch/mode="viewport"
-window/stretch/aspect="keep"
+window/stretch/aspect="keep_height"
 
 [rendering]
 

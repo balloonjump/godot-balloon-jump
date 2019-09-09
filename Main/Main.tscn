@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Main/Main.gd" type="Script" id=1]
+[ext_resource path="res://assets/background/cloudy_background.svg" type="Texture" id=2]
+[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Ground/Ground.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Ground/Ground.gd" type="Script" id=5]
+
+[node name="Main" type="Node2D"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_horizontal_guides_": [  ],
+"_edit_vertical_guides_": [  ]
+}
+
+[node name="cloudy_background" type="Sprite" parent="."]
+position = Vector2( 661.207, -715.918 )
+scale = Vector2( 0.4, 0.4 )
+texture = ExtResource( 2 )
+
+[node name="cloudy_background2" type="Sprite" parent="."]
+position = Vector2( 661, -2220 )
+scale = Vector2( 0.4, 0.4 )
+texture = ExtResource( 2 )
+
+[node name="Player" parent="." instance=ExtResource( 3 )]
+position = Vector2( 480.225, -497.114 )
+scale = Vector2( 0.25, 0.25 )
+speed_y_falling = 15
+max_position_x = 1090
+_state_jumping_counter_max = 25
+
+[node name="Ground" parent="." instance=ExtResource( 4 )]
+position = Vector2( 530.26, 50 )
+scale = Vector2( 5, 5 )
+script = ExtResource( 5 )
