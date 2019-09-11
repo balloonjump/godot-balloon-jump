@@ -1,32 +1,37 @@
 extends Node2D
 
 # ================================================
-# Exported Variables
+# Variables
 # ================================================
 
-export var speed_y_jumping = 20
-export var speed_y_falling = 25
-export var speed_x = 10
-export var min_position_x = 0
-export var max_position_x = 1000
-export var max_position_y = 0
+var speed_y_jumping = 20
+var speed_y_falling = 15
+var speed_x = 10
+
+# Maximum Positions are changed by Main.gd when the game starts,
+# they are determined by the "Ground" object, which defines the
+# playable area for the player.
+
+var min_position_x = 0
+var max_position_x = 1000
+var max_position_y = 0
 
 
-func get_scaled_extents() -> Vector2:
-	return $RigidBody2D/CollisionShape2D.shape.extents * transform.get_scale()
+func get_scaled_extents():
+	return $CollisionShape2D.shape.extents * transform.get_scale()
 
 
 # ================================================
 # Main Functions
 # ================================================
 
-func _ready() -> void:
+func _ready():
 	position.y = max_position_y
 	_state_machine_ready()
 	print("Ready: Player")
 
 
-func _physics_process(delta) -> void:
+func _physics_process(delta):
 	_state_machine_process()
 	_process_sideways_movement()
 
@@ -37,7 +42,7 @@ func _physics_process(delta) -> void:
 
 # TODO: MOVE THESE INTO THE STATE MACHINE WHEN IT MAKES SENSE! 
 
-func _process_sideways_movement() -> void:
+func _process_sideways_movement():
 	if Input.is_action_pressed("ui_right"):
 		position.x += speed_x
 	if Input.is_action_pressed("ui_left"):
@@ -92,7 +97,7 @@ func _state_machine_process():
 # ================================================
 
 func _state_machine_late_process():
-	if position.y > max_position_y:
+	if position.y > (max_position_y + 1):
 		position.y = max_position_y
 		_next_state = STATE_STANDING
 
