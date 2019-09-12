@@ -16,9 +16,30 @@ var min_position_x = 0
 var max_position_x = 1000
 var max_position_y = 0
 
+# Collision Variables, changed when the player is colliding with
+# a balloon string.
+
+var has_balloon_collision = false
+var the_balloon_im_holding: Area2D
+
+# Cooldowns
+# When a cooldown is 0, it has already finished "cooling"
+# Anything above 0 is considered "hot".
+# Each of the cooldowns is decremented by 1 per physics frame. 
+
+var cooldown_after_grab_ends = 0
+
+
+# ================================================
+# Public Functions
+# ================================================
+# Even though godot lets you call any function you want to, 
+# these are the functions that are specifically designed for
+# public usage.
 
 func get_scaled_extents():
 	return $CollisionShape2D.shape.extents * transform.get_scale()
+
 
 
 # ================================================
@@ -29,11 +50,15 @@ func _ready():
 	position.y = max_position_y
 	_state_machine_ready()
 	print("Ready: Player")
+	print("the_balloon_im_holding:", the_balloon_im_holding)
 
 
 func _physics_process(delta):
 	_state_machine_process()
 	_process_sideways_movement()
+	if cooldown_after_grab_ends > 0:
+		cooldown_after_grab_ends -= 1
+	
 
 
 # ================================================
@@ -54,19 +79,21 @@ func _process_sideways_movement():
 # State Machine 
 # ================================================
 
+var _current_state = STATE_STANDING
+var _next_state = STATE_STANDING
+
 enum {
 	STATE_STANDING,
 	STATE_JUMPING,
 	STATE_FALLING,
+	STATE_GRABBING,
 }
-
-var _current_state = STATE_STANDING
-var _next_state = STATE_STANDING
 
 var _stateFunctions = {
 	STATE_STANDING: _make_state_function_set("standing"),
 	STATE_JUMPING: _make_state_function_set("jumping"),
 	STATE_FALLING: _make_state_function_set("falling"),
+	STATE_GRABBING: _make_state_function_set("grabbing"),
 }
 
 func _make_state_function_set(name):
@@ -100,6 +127,12 @@ func _state_machine_late_process():
 	if position.y > (max_position_y + 1):
 		position.y = max_position_y
 		_next_state = STATE_STANDING
+	if (
+		_current_state != STATE_GRABBING
+		and cooldown_after_grab_ends == 0
+		and has_balloon_collision
+	):
+		_next_state = STATE_GRABBING
 
 
 # ================================================
@@ -142,7 +175,8 @@ func _state_jumping_update():
 
 
 func _state_jumping_exit():
-	print("JUMP ^^^ = ", _state_jumping_counter)
+	# print("JUMP ^^^ = ", _state_jumping_counter)
+	pass
 
 
 # ================================================
@@ -160,5 +194,44 @@ func _state_falling_update():
 	position.y += speed_y_falling
 	
 func _state_falling_exit():
-	print("fall down counter = ", _state_falling_counter)
+	# print("fall down counter = ", _state_falling_counter)
+	pass
 
+
+# ================================================
+# State: Grabbing
+# ================================================
+
+func _state_grabbing_enter():
+	print("grabbing: enter")
+	
+func _state_grabbing_update():
+	if not the_balloon_im_holding.overlaps_area(self.get_node(".")):
+		has_balloon_collision = false
+		_next_state = STATE_FALLING
+		
+
+func _state_grabbing_exit():
+	the_balloon_im_holding = null
+	cooldown_after_grab_ends = 10
+	print("grabbing: exit")
+	
+
+
+
+# ================================================
+# Signal Callbacks
+# ================================================
+
+func _on_Balloon_area_entered(area: Area2D):
+	has_balloon_collision = true 
+	print("you just collided with: ", area.get_instance_id(), "and you are overlapping with: ", get_node(".").get_overlapping_areas())
+	if the_balloon_im_holding == null:
+		the_balloon_im_holding = area
+	
+
+
+func _on_Player_area_entered(area: Area2D):
+	if "balloon" in area.get_groups():
+		the_balloon_im_holding = area
+		has_balloon_collision = true

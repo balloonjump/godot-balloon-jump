@@ -17,7 +17,7 @@ animations = [ {
 } ]
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 63.9247, 98.329 )
+extents = Vector2( 17.2489, 98.329 )
 
 [node name="Balloon" type="Area2D"]
 

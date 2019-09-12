@@ -31,5 +31,8 @@ _state_jumping_counter_max = 25
 [node name="Ground" parent="." instance=ExtResource( 4 )]
 position = Vector2( 378.956, -53.1875 )
 
-[node name="Balloon" parent="." instance=ExtResource( 5 )]
+[node name="Balloon" parent="." groups=[
+"balloon",
+] instance=ExtResource( 5 )]
 position = Vector2( 262.892, -783.453 )
+[connection signal="area_entered" from="Player" to="Player" method="_on_Player_area_entered"]
