@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://assets/player/svgs/stand.svg" type="Texture" id=2]
 [ext_resource path="res://assets/player/svgs/jump.svg" type="Texture" id=3]
+[ext_resource path="res://assets/player/svgs/grab_left.svg" type="Texture" id=4]
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
@@ -15,10 +16,15 @@ animations = [ {
 "loop": true,
 "name": "jump",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "grab",
+"speed": 5.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 129.419, 254.802 )
+extents = Vector2( 116.167, 250.027 )
 
 [node name="Player" type="Area2D"]
 script = ExtResource( 1 )
@@ -26,6 +32,7 @@ script = ExtResource( 1 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 position = Vector2( 14, 0 )
 frames = SubResource( 1 )
+animation = "grab"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 0, -100 )
@@ -35,4 +42,6 @@ limit_smoothed = true
 smoothing_enabled = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 1.65393, 1.65399 )
 shape = SubResource( 2 )
+[connection signal="area_exited" from="." to="." method="_on_Player_area_exited"]

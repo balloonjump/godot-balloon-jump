@@ -1,6 +1,21 @@
 extends Node2D
 
+export var first_balloon_y = -500
+export var balloon_spacing_y_min = -100
+export var balloon_spacing_y_max = -200
+
+var Balloon = preload("res://Balloon/Balloon.tscn")
+
+var next_balloon_y: int
+
+
 func _ready():
+	
+	randomize()
+	
+	# ---------------------------------------------------------------------
+	# Determine Play Area
+	# ---------------------------------------------------------------------
 	
 	# The Ground Determines the dimensions of the play area
 	# which determines the min/max of the player's position.
@@ -22,9 +37,39 @@ func _ready():
 	$Player/Camera2D.limit_left   = $Ground.position.x - ground_half_width
 	$Player/Camera2D.limit_right  = $Ground.position.x + ground_half_width
 	$Player/Camera2D.limit_bottom = $Ground.position.y + ground_half_height
+	
+	
+	# ---------------------------------------------------------------------
+	# When the Game Starts
+	# ---------------------------------------------------------------------
+	
+	gamereset()
 
 
-func _process(delta):
+
+func gamereset():
+	spawnInitialBallons()
+
+
+func spawnInitialBallons():
+	next_balloon_y = first_balloon_y
+	var min_x = $Player.min_position_x
+	var max_x = $Player.max_position_x
+	for i in range(10):
+		var bal = Balloon.instance()
+		add_child(bal)
+		bal.position.x = int(rand_range(min_x, max_x))
+		bal.position.y = next_balloon_y
+		next_balloon_y += int(rand_range(balloon_spacing_y_min, balloon_spacing_y_max))
+
+
+
+
+# ---------------------------------------------------------------------
+# Proccessing
+# ---------------------------------------------------------------------
+
+
+func _physics_process(delta: float) -> void:
 	pass
-
-
+	

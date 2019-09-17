@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Main/Main.gd" type="Script" id=1]
 [ext_resource path="res://assets/background/cloudy_background.svg" type="Texture" id=2]
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Ground/Ground.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Balloon/Balloon.tscn" type="PackedScene" id=5]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -14,25 +13,21 @@ __meta__ = {
 }
 
 [node name="background1" type="Sprite" parent="."]
-position = Vector2( 370, -574.918 )
+position = Vector2( 0, -1140 )
 scale = Vector2( 0.3, 0.3 )
 texture = ExtResource( 2 )
+centered = false
 
 [node name="background2" type="Sprite" parent="."]
-position = Vector2( 369.8, -1700.28 )
+position = Vector2( 0, -2273 )
 scale = Vector2( 0.3, 0.3 )
 texture = ExtResource( 2 )
+centered = false
 
 [node name="Player" parent="." instance=ExtResource( 3 )]
 position = Vector2( 480.225, -497.114 )
 scale = Vector2( 0.25, 0.25 )
-_state_jumping_counter_max = 25
 
 [node name="Ground" parent="." instance=ExtResource( 4 )]
-position = Vector2( 378.956, -53.1875 )
-
-[node name="Balloon" parent="." groups=[
-"balloon",
-] instance=ExtResource( 5 )]
-position = Vector2( 262.892, -783.453 )
+position = Vector2( 566.767, 5.49792 )
 [connection signal="area_entered" from="Player" to="Player" method="_on_Player_area_entered"]

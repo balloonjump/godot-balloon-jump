@@ -19,15 +19,19 @@ var max_position_y = 0
 # Collision Variables, changed when the player is colliding with
 # a balloon string.
 
-var has_balloon_collision = false
 var the_balloon_im_holding: Area2D
+var the_balloon_i_jumped_from: Area2D
+var jump_used_up = false
 
 # Cooldowns
 # When a cooldown is 0, it has already finished "cooling"
 # Anything above 0 is considered "hot".
 # Each of the cooldowns is decremented by 1 per physics frame. 
 
-var cooldown_after_grab_ends = 0
+var cooldowns = {
+	after_grab_ends = 0,
+	after_grab_begins = 0,
+}
 
 
 # ================================================
@@ -49,16 +53,16 @@ func get_scaled_extents():
 func _ready():
 	position.y = max_position_y
 	_state_machine_ready()
-	print("Ready: Player")
-	print("the_balloon_im_holding:", the_balloon_im_holding)
+	
+func _process(delta):
+	_process_sideways_movement(delta)
 
 
 func _physics_process(delta):
 	_state_machine_process()
-	_process_sideways_movement()
-	if cooldown_after_grab_ends > 0:
-		cooldown_after_grab_ends -= 1
-	
+	for k in cooldowns.keys():
+		if cooldowns[k] > 0: 
+			cooldowns[k] -= 1
 
 
 # ================================================
@@ -67,11 +71,17 @@ func _physics_process(delta):
 
 # TODO: MOVE THESE INTO THE STATE MACHINE WHEN IT MAKES SENSE! 
 
-func _process_sideways_movement():
+func _process_sideways_movement(delta):
+	var curr_speed = 0
+	if cooldowns.after_grab_begins > 5:
+		return
 	if Input.is_action_pressed("ui_right"):
-		position.x += speed_x
+		curr_speed += speed_x
+		$AnimatedSprite.flip_h = false
 	if Input.is_action_pressed("ui_left"):
-		position.x -= speed_x
+		curr_speed -= speed_x
+		$AnimatedSprite.flip_h = true
+	position.x += curr_speed * delta * 60
 	position.x = clamp(position.x, min_position_x, max_position_x)
 
 
@@ -129,8 +139,9 @@ func _state_machine_late_process():
 		_next_state = STATE_STANDING
 	if (
 		_current_state != STATE_GRABBING
-		and cooldown_after_grab_ends == 0
-		and has_balloon_collision
+		and cooldowns.after_grab_ends <= 0
+		and the_balloon_im_holding != null
+		and the_balloon_im_holding != the_balloon_i_jumped_from
 	):
 		_next_state = STATE_GRABBING
 
@@ -141,6 +152,7 @@ func _state_machine_late_process():
 
 func _state_standing_enter():
 	$AnimatedSprite.animation = "default"
+	jump_used_up = false
 	
 	
 func _state_standing_update():
@@ -157,13 +169,14 @@ func _state_standing_exit():
 # State: Jumping
 # ================================================
 
-export var _state_jumping_counter_max = 30
+var _state_jumping_counter_max = 25
 var _state_jumping_counter = 0
 
 
 func _state_jumping_enter():
 	$AnimatedSprite.animation = "jump"
 	_state_jumping_counter = 0
+	jump_used_up = true
 
 	
 func _state_jumping_update():
@@ -175,7 +188,6 @@ func _state_jumping_update():
 
 
 func _state_jumping_exit():
-	# print("JUMP ^^^ = ", _state_jumping_counter)
 	pass
 
 
@@ -192,9 +204,14 @@ func _state_falling_enter():
 func _state_falling_update():
 	_state_falling_counter += 1
 	position.y += speed_y_falling
-	
+	if (
+		Input.is_action_pressed("ui_up")
+		and not jump_used_up
+	):
+		_next_state = STATE_JUMPING
+
+
 func _state_falling_exit():
-	# print("fall down counter = ", _state_falling_counter)
 	pass
 
 
@@ -203,19 +220,29 @@ func _state_falling_exit():
 # ================================================
 
 func _state_grabbing_enter():
-	print("grabbing: enter")
-	
+	$AnimatedSprite.animation = "grab"
+	cooldowns.after_grab_begins = 10
+	jump_used_up = false
+
+
 func _state_grabbing_update():
-	if not the_balloon_im_holding.overlaps_area(self.get_node(".")):
-		has_balloon_collision = false
+	if (
+		the_balloon_im_holding == null
+		or not the_balloon_im_holding.overlaps_area(self.get_node("."))
+	):
 		_next_state = STATE_FALLING
-		
+	
+	if (
+		Input.is_action_pressed("ui_up")
+		and cooldowns.after_grab_begins <= 0
+	):
+		the_balloon_i_jumped_from = the_balloon_im_holding
+		_next_state = STATE_JUMPING
+
 
 func _state_grabbing_exit():
 	the_balloon_im_holding = null
-	cooldown_after_grab_ends = 10
-	print("grabbing: exit")
-	
+	cooldowns.after_grab_ends = 5
 
 
 
@@ -223,15 +250,13 @@ func _state_grabbing_exit():
 # Signal Callbacks
 # ================================================
 
-func _on_Balloon_area_entered(area: Area2D):
-	has_balloon_collision = true 
-	print("you just collided with: ", area.get_instance_id(), "and you are overlapping with: ", get_node(".").get_overlapping_areas())
-	if the_balloon_im_holding == null:
-		the_balloon_im_holding = area
-	
-
-
-func _on_Player_area_entered(area: Area2D):
+func _on_Player_area_entered(area: Area2D) -> void:
 	if "balloon" in area.get_groups():
 		the_balloon_im_holding = area
-		has_balloon_collision = true
+
+
+func _on_Player_area_exited(area: Area2D) -> void:
+	if area == the_balloon_i_jumped_from:
+		the_balloon_i_jumped_from = null 
+
+
