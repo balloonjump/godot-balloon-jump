@@ -13,13 +13,16 @@ __meta__ = {
 }
 
 [node name="background1" type="Sprite" parent="."]
-position = Vector2( 0, -1140 )
 scale = Vector2( 0.3, 0.3 )
 texture = ExtResource( 2 )
 centered = false
 
 [node name="background2" type="Sprite" parent="."]
-position = Vector2( 0, -2273 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="background3" type="Sprite" parent="."]
 scale = Vector2( 0.3, 0.3 )
 texture = ExtResource( 2 )
 centered = false
@@ -29,5 +32,5 @@ position = Vector2( 480.225, -497.114 )
 scale = Vector2( 0.25, 0.25 )
 
 [node name="Ground" parent="." instance=ExtResource( 4 )]
-position = Vector2( 566.767, 5.49792 )
-[connection signal="area_entered" from="Player" to="Player" method="_on_Player_area_entered"]
+position = Vector2( 566.767, 4.49792 )
+scale = Vector2( 0.84, 0.84 )

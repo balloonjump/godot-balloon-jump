@@ -1,16 +1,18 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://assets/balloons/balloon_string.svg" type="Texture" id=1]
-[ext_resource path="res://assets/balloons/red_balloon.svg" type="Texture" id=2]
+[ext_resource path="res://Balloon/Balloon.gd" type="Script" id=1]
+[ext_resource path="res://assets/balloons/balloon_string.svg" type="Texture" id=2]
+[ext_resource path="res://assets/balloons/red_balloon_adjusted.svg" type="Texture" id=3]
+[ext_resource path="res://assets/balloons/pop.svg" type="Texture" id=4]
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
-"frames": [ ExtResource( 2 ) ],
+"frames": [ ExtResource( 3 ) ],
 "loop": true,
 "name": "normal",
 "speed": 5.0
 }, {
-"frames": [  ],
+"frames": [ ExtResource( 4 ) ],
 "loop": true,
 "name": "popped",
 "speed": 5.0
@@ -21,21 +23,33 @@ extents = Vector2( 40.6618, 80.6519 )
 
 [node name="Balloon" type="Area2D" groups=[
 "balloon",
+"free_balloon",
 ]]
+position = Vector2( 2.33167, -0.806595 )
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
 
 [node name="String" type="Sprite" parent="."]
+visible = false
 position = Vector2( 5.25, 141.5 )
 scale = Vector2( 0.5, 0.5 )
-texture = ExtResource( 1 )
+texture = ExtResource( 2 )
 
 [node name="Top" type="AnimatedSprite" parent="."]
-scale = Vector2( 0.05, 0.05 )
+scale = Vector2( 0.5, 0.5 )
 frames = SubResource( 1 )
 animation = "normal"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( -0.506474, 254.672 )
 shape = SubResource( 2 )
+
+[node name="FloatUpTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="AfterPopTimer" type="Timer" parent="."]
+one_shot = true
+[connection signal="timeout" from="FloatUpTimer" to="." method="_on_FloatUpTimer_timeout"]
+[connection signal="timeout" from="AfterPopTimer" to="." method="_on_AfterPopTimer_timeout"]

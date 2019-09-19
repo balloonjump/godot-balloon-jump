@@ -1,4 +1,6 @@
-extends Node2D
+extends Area2D
+
+# var Balloon = preload("res://Balloon/Balloon.tscn")
 
 # ================================================
 # Variables
@@ -20,7 +22,7 @@ var max_position_y = 0
 # a balloon string.
 
 var the_balloon_im_holding: Area2D
-var the_balloon_i_jumped_from: Area2D
+var the_balloon_im_still_jumping_from: Area2D
 var jump_used_up = false
 
 # Cooldowns
@@ -73,8 +75,7 @@ func _physics_process(delta):
 
 func _process_sideways_movement(delta):
 	var curr_speed = 0
-	if cooldowns.after_grab_begins > 5:
-		return
+	# if cooldowns.after_grab_begins > 5: return
 	if Input.is_action_pressed("ui_right"):
 		curr_speed += speed_x
 		$AnimatedSprite.flip_h = false
@@ -137,18 +138,15 @@ func _state_machine_late_process():
 	if position.y > (max_position_y + 1):
 		position.y = max_position_y
 		_next_state = STATE_STANDING
-	if (
-		_current_state != STATE_GRABBING
-		and cooldowns.after_grab_ends <= 0
-		and the_balloon_im_holding != null
-		and the_balloon_im_holding != the_balloon_i_jumped_from
-	):
-		_next_state = STATE_GRABBING
-
+	_state_standing_transition_check_from_any_state()
+	_state_grabbing_transition_check_from_any_state()
 
 # ================================================
 # State: Standing
 # ================================================
+
+func _state_standing_transition_check_from_any_state():
+	pass
 
 func _state_standing_enter():
 	$AnimatedSprite.animation = "default"
@@ -182,13 +180,13 @@ func _state_jumping_enter():
 func _state_jumping_update():
 	if (Input.is_action_pressed("ui_up") and (_state_jumping_counter < _state_jumping_counter_max)):
 		_state_jumping_counter += 1
-		position.y -= speed_y_jumping
+		position.y -= (_state_jumping_counter_max - _state_jumping_counter) * 2
 	else:
 		_next_state = STATE_FALLING
 
 
 func _state_jumping_exit():
-	pass
+	the_balloon_im_still_jumping_from = null
 
 
 # ================================================
@@ -203,7 +201,7 @@ func _state_falling_enter():
 
 func _state_falling_update():
 	_state_falling_counter += 1
-	position.y += speed_y_falling
+	position.y += speed_y_falling + _state_falling_counter / 5
 	if (
 		Input.is_action_pressed("ui_up")
 		and not jump_used_up
@@ -219,44 +217,53 @@ func _state_falling_exit():
 # State: Grabbing
 # ================================================
 
+func _state_grabbing_transition_check_from_any_state():
+	if (_current_state == STATE_GRABBING
+		or cooldowns.after_grab_ends > 0
+		or the_balloon_im_holding != null
+	):
+		return
+		
+	for area in get_overlapping_areas():
+		if (area.is_in_group("balloon") 
+			and area != the_balloon_im_still_jumping_from
+		):
+			_next_state = STATE_GRABBING
+			the_balloon_im_holding = area
+
+
 func _state_grabbing_enter():
 	$AnimatedSprite.animation = "grab"
-	cooldowns.after_grab_begins = 10
+	cooldowns.after_grab_begins = 20
 	jump_used_up = false
 
 
 func _state_grabbing_update():
 	if (
 		the_balloon_im_holding == null
+		or the_balloon_im_holding.is_marked_for_deletion
 		or not the_balloon_im_holding.overlaps_area(self.get_node("."))
 	):
+		the_balloon_im_holding = null
 		_next_state = STATE_FALLING
+		return
+	
+	the_balloon_im_holding.activate_balloon()
 	
 	if (
 		Input.is_action_pressed("ui_up")
 		and cooldowns.after_grab_begins <= 0
 	):
-		the_balloon_i_jumped_from = the_balloon_im_holding
+		the_balloon_im_still_jumping_from = the_balloon_im_holding
 		_next_state = STATE_JUMPING
+		return
+	
+	position.y -= the_balloon_im_holding.get_current_speed()
+
 
 
 func _state_grabbing_exit():
 	the_balloon_im_holding = null
 	cooldowns.after_grab_ends = 5
-
-
-
-# ================================================
-# Signal Callbacks
-# ================================================
-
-func _on_Player_area_entered(area: Area2D) -> void:
-	if "balloon" in area.get_groups():
-		the_balloon_im_holding = area
-
-
-func _on_Player_area_exited(area: Area2D) -> void:
-	if area == the_balloon_i_jumped_from:
-		the_balloon_i_jumped_from = null 
-
+	cooldowns.after_grab_begins = 0
 

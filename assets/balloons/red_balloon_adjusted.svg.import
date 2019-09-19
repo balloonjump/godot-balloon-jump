@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/red_balloon.svg-4070b02a773dc3e50968a9b2d935680f.stex"
+path="res://.import/red_balloon_adjusted.svg-41f80b7febc872de80aa4bc377962cde.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/balloons/red_balloon.svg"
-dest_files=[ "res://.import/red_balloon.svg-4070b02a773dc3e50968a9b2d935680f.stex" ]
+source_file="res://assets/balloons/red_balloon_adjusted.svg"
+dest_files=[ "res://.import/red_balloon_adjusted.svg-41f80b7febc872de80aa4bc377962cde.stex" ]
 
 [params]
 
