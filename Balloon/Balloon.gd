@@ -1,5 +1,7 @@
 extends Area2D
 
+class_name Balloon
+
 var rising_speed = 10
 var activated = false
 var is_marked_for_deletion = false

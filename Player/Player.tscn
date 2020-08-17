@@ -2,8 +2,8 @@
 
 [ext_resource path="res://Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://assets/player/svgs/stand.svg" type="Texture" id=2]
-[ext_resource path="res://assets/player/svgs/jump.svg" type="Texture" id=3]
-[ext_resource path="res://assets/player/svgs/grab_left.svg" type="Texture" id=4]
+[ext_resource path="res://assets/player/svgs/grab_left.svg" type="Texture" id=3]
+[ext_resource path="res://assets/player/svgs/jump.svg" type="Texture" id=4]
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
@@ -12,12 +12,12 @@ animations = [ {
 "name": "default",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 3 ) ],
+"frames": [ ExtResource( 4 ) ],
 "loop": true,
 "name": "jump",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 4 ) ],
+"frames": [ ExtResource( 3 ) ],
 "loop": true,
 "name": "grab",
 "speed": 5.0
@@ -35,12 +35,10 @@ frames = SubResource( 1 )
 animation = "grab"
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 0, -100 )
+position = Vector2( 0, -99 )
 current = true
+process_mode = 0
 limit_bottom = 100
-limit_smoothed = true
-drag_margin_h_enabled = false
-drag_margin_v_enabled = false
 smoothing_enabled = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

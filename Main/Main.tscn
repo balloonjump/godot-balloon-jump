@@ -34,3 +34,11 @@ scale = Vector2( 0.25, 0.25 )
 [node name="Ground" parent="." instance=ExtResource( 4 )]
 position = Vector2( 566.767, 4.49792 )
 scale = Vector2( 0.84, 0.84 )
+
+[node name="DeathLine" type="Line2D" parent="."]
+points = PoolVector2Array( 0, 0, 1040, 0 )
+default_color = Color( 0.807843, 0.054902, 0.054902, 1 )
+
+[node name="LoonLine" type="Line2D" parent="."]
+points = PoolVector2Array( 0, 0, 1040, 0 )
+default_color = Color( 0.141176, 0.67451, 0.0666667, 1 )

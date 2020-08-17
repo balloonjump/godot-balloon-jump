@@ -2,13 +2,22 @@ extends Area2D
 
 # var Balloon = preload("res://Balloon/Balloon.tscn")
 
+
+# ================================================
+# Constants
+# ================================================
+
+
+const DEFAULT_AFTER_GRAB_BEGINS_COOLDOWN = 10
+const DEFAULT_JUMP_JUICE = 10
+
 # ================================================
 # Variables
 # ================================================
 
 var speed_y_jumping = 20
-var speed_y_falling = 15
-var speed_x = 10
+var speed_y_falling = 8
+var speed_x = 12
 
 # Maximum Positions are changed by Main.gd when the game starts,
 # they are determined by the "Ground" object, which defines the
@@ -34,6 +43,12 @@ var cooldowns = {
 	after_grab_ends = 0,
 	after_grab_begins = 0,
 }
+
+# Jump Juice
+# An experiment in jumping mechanics: which basically pretends you are wearing
+# a jetpack that has "juice".  It gets used up as you increase height during a
+# jump. Once you run out of juice, you can't go any higher until you land.
+var current_jump_juice = DEFAULT_JUMP_JUICE
 
 
 # ================================================
@@ -154,6 +169,7 @@ func _state_standing_enter():
 	
 	
 func _state_standing_update():
+	_state_jumping_counter = 0
 	if Input.is_action_pressed("ui_up"):
 		_next_state = STATE_JUMPING
 	
@@ -173,7 +189,7 @@ var _state_jumping_counter = 0
 
 func _state_jumping_enter():
 	$AnimatedSprite.animation = "jump"
-	_state_jumping_counter = 0
+	# _state_jumping_counter = 0
 	jump_used_up = true
 
 	
@@ -204,7 +220,8 @@ func _state_falling_update():
 	position.y += speed_y_falling + _state_falling_counter / 5
 	if (
 		Input.is_action_pressed("ui_up")
-		and not jump_used_up
+		# and not jump_used_up
+		and _state_jumping_counter < _state_jumping_counter_max 
 	):
 		_next_state = STATE_JUMPING
 
@@ -234,8 +251,9 @@ func _state_grabbing_transition_check_from_any_state():
 
 func _state_grabbing_enter():
 	$AnimatedSprite.animation = "grab"
-	cooldowns.after_grab_begins = 20
+	cooldowns.after_grab_begins = DEFAULT_AFTER_GRAB_BEGINS_COOLDOWN
 	jump_used_up = false
+	_state_jumping_counter = 0
 
 
 func _state_grabbing_update():
