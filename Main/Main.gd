@@ -37,6 +37,8 @@ func _ready():
 	# Determine Play Area
 	# ---------------------------------------------------------------------
 	
+	var max_x = ProjectSettings.get_setting("display/window/size/width")
+	
 	# The Ground Determines the dimensions of the play area
 	# which determines the min/max of the player's position.
 	
@@ -45,18 +47,23 @@ func _ready():
 	var player_half_width   = $Player.get_scaled_extents().x
 	var player_half_height  = $Player.get_scaled_extents().y
 	
-	$Player.min_position_x  = $Ground.position.x - ground_half_width  + player_half_width
-	$Player.max_position_x  = $Ground.position.x + ground_half_width  - player_half_width
+	# $Player.min_position_x  = $Ground.position.x - ground_half_width  + player_half_width
+	# $Player.max_position_x  = $Ground.position.x + ground_half_width  - player_half_width
 	$Player.max_position_y  = $Ground.position.y - ground_half_height - player_half_height
+	$Player.max_position_x = max_x
+	$Player.min_position_x = 0
 	
 	
 	# The Ground will also determine where the camera limits are for now.
 	# If other images are added to the sides of the play area, then this
 	# will change.
 	
-	camera.limit_left   = $Ground.position.x - ground_half_width
-	camera.limit_right  = $Ground.position.x + ground_half_width
+	# camera.limit_left   = $Ground.position.x - ground_half_width
+	# camera.limit_right  = $Ground.position.x + ground_half_width
 	camera.limit_bottom = $Ground.position.y + ground_half_height
+	
+	camera.limit_left = 0
+	camera.limit_right = max_x
 
 	# ---------------------------------------------------------------------
 	# Init Background
@@ -93,9 +100,7 @@ var number_of_balloons_generated := DEFAULT_NUMBER_OF_BALLOONS_TO_GENERATE
 func gamereset():
 	print("game reset!")
 	reset_line = DISTANCE_BETWEEN_PLAYER_AND_RESET_LINE
-	camera.smoothing_enabled = false
 	$Player.position.y = 0
-	camera.smoothing_enabled = true
 	var children = get_children()
 	for child in children:
 		if child.is_in_group("balloon"):
