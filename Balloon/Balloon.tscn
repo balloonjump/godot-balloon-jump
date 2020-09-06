@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Balloon/Balloon.gd" type="Script" id=1]
 [ext_resource path="res://assets/balloons/balloon_string.svg" type="Texture" id=2]
-[ext_resource path="res://assets/balloons/red_balloon_adjusted.svg" type="Texture" id=3]
+[ext_resource path="res://assets/balloons/fancy_balloon.PNG" type="Texture" id=3]
 [ext_resource path="res://assets/balloons/pop.svg" type="Texture" id=4]
 
 [sub_resource type="SpriteFrames" id=1]
@@ -25,7 +25,6 @@ extents = Vector2( 40.6618, 80.6519 )
 "balloon",
 "free_balloon",
 ]]
-position = Vector2( 2.33167, -0.806595 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
@@ -38,6 +37,7 @@ scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 2 )
 
 [node name="Top" type="AnimatedSprite" parent="."]
+position = Vector2( 3, -71 )
 scale = Vector2( 0.5, 0.5 )
 frames = SubResource( 1 )
 animation = "normal"

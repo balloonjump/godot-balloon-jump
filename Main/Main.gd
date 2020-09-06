@@ -5,7 +5,9 @@ export var balloon_spacing_y_min = -200
 export var balloon_spacing_y_max = -400
 
 export var GUI_NODE_PATH: NodePath
+
 onready var gui = get_node(GUI_NODE_PATH)
+onready var camera = get_node("Camera2D")
 
 const Balloon = preload("res://Balloon/Balloon.tscn")
 
@@ -52,9 +54,9 @@ func _ready():
 	# If other images are added to the sides of the play area, then this
 	# will change.
 	
-	$Camera2D.limit_left   = $Ground.position.x - ground_half_width
-	$Camera2D.limit_right  = $Ground.position.x + ground_half_width
-	# $Player/Camera2D.limit_bottom = $Ground.position.y + ground_half_height
+	camera.limit_left   = $Ground.position.x - ground_half_width
+	camera.limit_right  = $Ground.position.x + ground_half_width
+	camera.limit_bottom = $Ground.position.y + ground_half_height
 
 	# ---------------------------------------------------------------------
 	# Init Background
@@ -90,6 +92,10 @@ var number_of_balloons_generated := DEFAULT_NUMBER_OF_BALLOONS_TO_GENERATE
 
 func gamereset():
 	print("game reset!")
+	reset_line = DISTANCE_BETWEEN_PLAYER_AND_RESET_LINE
+	camera.smoothing_enabled = false
+	$Player.position.y = 0
+	camera.smoothing_enabled = true
 	var children = get_children()
 	for child in children:
 		if child.is_in_group("balloon"):
@@ -156,10 +162,8 @@ func _process(delta: float) -> void:
 	processBalloonSpawner()
 	
 	if $Player.position.y > reset_line:
-		reset_line = DISTANCE_BETWEEN_PLAYER_AND_RESET_LINE
-		$Player.position.y = 0
-		update_background_positions()
 		gamereset()
+	
 	update_background_positions()
 	
 	current_score = -floor($Player.position.y / 10)
