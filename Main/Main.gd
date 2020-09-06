@@ -4,9 +4,13 @@ export var first_balloon_y = -500
 export var balloon_spacing_y_min = -200
 export var balloon_spacing_y_max = -400
 
+export var GUI_NODE_PATH: NodePath
+onready var gui = get_node(GUI_NODE_PATH)
+
 const Balloon = preload("res://Balloon/Balloon.tscn")
 
 var next_balloon_y: int
+var current_score : int = 0
 
 const DISTANCE_BETWEEN_NEWEST_BALLOON_AND_SPAWN_LINE := 5000
 const DISTANCE_BETWEEN_PLAYER_AND_RESET_LINE := 800
@@ -48,9 +52,9 @@ func _ready():
 	# If other images are added to the sides of the play area, then this
 	# will change.
 	
-	$Player/Camera2D.limit_left   = $Ground.position.x - ground_half_width
-	$Player/Camera2D.limit_right  = $Ground.position.x + ground_half_width
-	$Player/Camera2D.limit_bottom = $Ground.position.y + ground_half_height
+	$Camera2D.limit_left   = $Ground.position.x - ground_half_width
+	$Camera2D.limit_right  = $Ground.position.x + ground_half_width
+	# $Player/Camera2D.limit_bottom = $Ground.position.y + ground_half_height
 
 	# ---------------------------------------------------------------------
 	# Init Background
@@ -64,7 +68,7 @@ func _ready():
 	
 	background_height = $background1.get_rect().size.y * $background1.scale.y
 	
-	$background1.position.y = $Player/Camera2D.limit_bottom - background_height
+	# $background1.position.y = $Player/Camera2D.limit_bottom - background_height
 	$background2.position.y = $background1.position.y - background_height
 	$background3.position.y = $background2.position.y - background_height
 	
@@ -157,6 +161,11 @@ func _process(delta: float) -> void:
 		update_background_positions()
 		gamereset()
 	update_background_positions()
+	
+	current_score = -floor($Player.position.y / 10)
+	if current_score == null:
+		print("WHY IS CURRENT_SCORE NULL")
+	gui.set_score(current_score)
 	
 func _physics_process(delta: float) -> void:
 	pass
