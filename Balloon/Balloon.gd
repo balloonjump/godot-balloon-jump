@@ -31,7 +31,7 @@ func get_current_speed() -> int:
 	return 0
 
 
-func _draw() -> void:
+func _draw():
 	# Manually Draw the Balloon String.
 	draw_line(
 		Vector2(0, 0),

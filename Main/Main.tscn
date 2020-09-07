@@ -15,6 +15,10 @@ __meta__ = {
 }
 GUI_NODE_PATH = NodePath("CanvasLayer/GUI")
 
+[node name="Player" parent="." instance=ExtResource( 6 )]
+position = Vector2( 520, -580 )
+z_index = 1
+
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
 process_mode = 0
@@ -50,10 +54,6 @@ default_color = Color( 0.807843, 0.054902, 0.054902, 1 )
 visible = false
 points = PoolVector2Array( 0, 0, 1040, 0 )
 default_color = Color( 0.141176, 0.67451, 0.0666667, 1 )
-
-[node name="Player" parent="." instance=ExtResource( 6 )]
-position = Vector2( 520, -580 )
-z_index = 1
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

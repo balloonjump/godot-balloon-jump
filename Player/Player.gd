@@ -68,6 +68,7 @@ func _ready():
 	
 func _process(delta):
 	_process_sideways_movement(delta)
+	update()
 
 
 func _physics_process(delta):
@@ -84,14 +85,17 @@ func _physics_process(delta):
 # TODO: MOVE THESE INTO THE STATE MACHINE WHEN IT MAKES SENSE! 
 
 func _process_sideways_movement(delta):
+	
 	var curr_speed = 0
-	# if cooldowns.after_grab_begins > 5: return
+	
 	if Input.is_action_pressed("ui_right"):
 		curr_speed += SPEED_X
 		$AnimatedSprite.flip_h = false
+	
 	if Input.is_action_pressed("ui_left"):
 		curr_speed -= SPEED_X
 		$AnimatedSprite.flip_h = true
+	
 	position.x += curr_speed * delta * 60
 	position.x = clamp(position.x, min_position_x, max_position_x)
 
@@ -254,7 +258,7 @@ func _state_grabbing_update():
 		the_balloon_im_holding = null
 		_next_state = STATE_FALLING
 		return
-	
+		
 	the_balloon_im_holding.activate_balloon()
 	
 	if (
@@ -265,8 +269,31 @@ func _state_grabbing_update():
 		_next_state = STATE_JUMPING
 		return
 	
+	
+	# Move the balloon around with you!
+	
+	if Input.is_action_pressed("ui_right"):
+		the_balloon_im_holding.position.x += SPEED_X / 2  
+	
+	if Input.is_action_pressed("ui_left"):
+		the_balloon_im_holding.position.x -= SPEED_X / 2
+	
+	if Input.is_action_pressed("ui_down"):
+		the_balloon_im_holding.position.y += SPEED_X
+		position.y += SPEED_X
+		
+	# Move Upward with the ballon
 	position.y -= the_balloon_im_holding.get_current_speed()
 
+
+func _draw():
+	var relative_balloon_position = Vector2(0,0)
+	if the_balloon_im_holding != null:
+		relative_balloon_position = the_balloon_im_holding.position - position
+		relative_balloon_position.y += 15
+		relative_balloon_position.y = max(relative_balloon_position.y, -110)
+	draw_line(Vector2(0,0), relative_balloon_position, Color(0,0,0), 2, true)
+	
 
 
 func _state_grabbing_exit():
