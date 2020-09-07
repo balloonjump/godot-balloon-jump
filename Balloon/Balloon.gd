@@ -1,3 +1,4 @@
+tool
 extends Area2D
 
 class_name Balloon
@@ -7,6 +8,10 @@ var activated = false
 var is_marked_for_deletion = false
 
 signal freed()
+
+func _ready():
+	_draw()
+
 
 func set_float_up_time(wait_time: int) -> void:
 	$FloatUpTimer.wait_time = wait_time
@@ -30,9 +35,10 @@ func _draw() -> void:
 	# Manually Draw the Balloon String.
 	draw_line(
 		Vector2(0, 0),
-		Vector2(0, 400),
+		Vector2(0, 200),
 		Color(0.0, 0.0, 0.0),
-		8
+		8,
+		true
 	)
 
 

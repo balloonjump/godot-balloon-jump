@@ -15,9 +15,10 @@ const DEFAULT_JUMP_JUICE = 10
 # Variables
 # ================================================
 
-var speed_y_jumping = 20
+var speed_y_jumping = 10
 var speed_y_falling = 8
-var speed_x = 12
+var speed_x = 13
+
 
 # Maximum Positions are changed by Main.gd when the game starts,
 # they are determined by the "Ground" object, which defines the
@@ -183,7 +184,7 @@ func _state_standing_exit():
 # State: Jumping
 # ================================================
 
-var _state_jumping_counter_max = 25
+var _state_jumping_counter_max = 20
 var _state_jumping_counter = 0
 
 

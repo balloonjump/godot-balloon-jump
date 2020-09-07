@@ -47,6 +47,7 @@ points = PoolVector2Array( 0, 0, 1040, 0 )
 default_color = Color( 0.807843, 0.054902, 0.054902, 1 )
 
 [node name="LoonLine" type="Line2D" parent="."]
+visible = false
 points = PoolVector2Array( 0, 0, 1040, 0 )
 default_color = Color( 0.141176, 0.67451, 0.0666667, 1 )
 

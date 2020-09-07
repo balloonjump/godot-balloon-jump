@@ -98,7 +98,7 @@ const DEFAULT_NUMBER_OF_BALLOONS_TO_GENERATE := 10
 var number_of_balloons_generated := DEFAULT_NUMBER_OF_BALLOONS_TO_GENERATE
 
 func gamereset():
-	print("game reset!")
+	# print("game reset!")
 	reset_line = DISTANCE_BETWEEN_PLAYER_AND_RESET_LINE
 	$Player.position.y = 0
 	var children = get_children()
@@ -107,7 +107,7 @@ func gamereset():
 			remove_child(child)
 	spawnInitialBallons()
 	number_of_balloons_generated = DEFAULT_NUMBER_OF_BALLOONS_TO_GENERATE
-	debug_print_bal_count()
+	# debug_print_bal_count()
 
 
 func spawnInitialBallons():
@@ -139,7 +139,7 @@ func processBalloonSpawner():
 	if $Player.position.y < y:
 		spawnNewRandomBalloon()
 		number_of_balloons_generated += 1
-		debug_print_bal_count()
+		# debug_print_bal_count()
 
 
 func debug_print_bal_count():
@@ -171,9 +171,7 @@ func _process(delta: float) -> void:
 	
 	update_background_positions()
 	
-	current_score = -floor($Player.position.y / 10)
-	if current_score == null:
-		print("WHY IS CURRENT_SCORE NULL")
+	current_score = -floor($Player.position.y / 1000) - 1
 	gui.set_score(current_score)
 	
 func _physics_process(delta: float) -> void:

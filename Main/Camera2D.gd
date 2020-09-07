@@ -5,4 +5,4 @@ export var node_to_follow : NodePath
 onready var follow = get_node(node_to_follow)
 
 func _process(delta):
-	position = follow.position
+	position = follow.position - Vector2(0, 100)

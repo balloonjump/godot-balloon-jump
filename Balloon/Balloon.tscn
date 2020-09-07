@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Balloon/Balloon.gd" type="Script" id=1]
-[ext_resource path="res://assets/balloons/balloon_string.svg" type="Texture" id=2]
 [ext_resource path="res://assets/balloons/fancy_balloon.PNG" type="Texture" id=3]
 [ext_resource path="res://assets/balloons/pop.svg" type="Texture" id=4]
 
@@ -19,7 +18,7 @@ animations = [ {
 } ]
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 40.6618, 80.6519 )
+extents = Vector2( 20, 50 )
 
 [node name="Balloon" type="Area2D" groups=[
 "balloon",
@@ -30,20 +29,14 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="String" type="Sprite" parent="."]
-visible = false
-position = Vector2( 5.25, 141.5 )
-scale = Vector2( 0.5, 0.5 )
-texture = ExtResource( 2 )
-
 [node name="Top" type="AnimatedSprite" parent="."]
 position = Vector2( 3, -71 )
-scale = Vector2( 0.5, 0.5 )
+scale = Vector2( 0.33, 0.33 )
 frames = SubResource( 1 )
 animation = "normal"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( -0.506474, 254.672 )
+position = Vector2( 0, 200 )
 shape = SubResource( 2 )
 
 [node name="FloatUpTimer" type="Timer" parent="."]
