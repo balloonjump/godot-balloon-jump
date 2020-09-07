@@ -7,18 +7,18 @@ extends Area2D
 # Constants
 # ================================================
 
-
-const DEFAULT_AFTER_GRAB_BEGINS_COOLDOWN = 10
-const DEFAULT_JUMP_JUICE = 10
+const DEFAULT_AFTER_GRAB_BEGINS_COOLDOWN = 12
+const MAX_JUMPING_COUNTER = 20
+const SPEED_Y_FALLING = 8
+const SPEED_X = 13
 
 # ================================================
 # Variables
 # ================================================
 
-var speed_y_jumping = 10
-var speed_y_falling = 8
-var speed_x = 13
-
+var _current_state = STATE_STANDING
+var _next_state = STATE_STANDING
+var _state_falling_counter = 0
 
 # Maximum Positions are changed by Main.gd when the game starts,
 # they are determined by the "Ground" object, which defines the
@@ -44,12 +44,6 @@ var cooldowns = {
 	after_grab_ends = 0,
 	after_grab_begins = 0,
 }
-
-# Jump Juice
-# An experiment in jumping mechanics: which basically pretends you are wearing
-# a jetpack that has "juice".  It gets used up as you increase height during a
-# jump. Once you run out of juice, you can't go any higher until you land.
-var current_jump_juice = DEFAULT_JUMP_JUICE
 
 
 # ================================================
@@ -93,10 +87,10 @@ func _process_sideways_movement(delta):
 	var curr_speed = 0
 	# if cooldowns.after_grab_begins > 5: return
 	if Input.is_action_pressed("ui_right"):
-		curr_speed += speed_x
+		curr_speed += SPEED_X
 		$AnimatedSprite.flip_h = false
 	if Input.is_action_pressed("ui_left"):
-		curr_speed -= speed_x
+		curr_speed -= SPEED_X
 		$AnimatedSprite.flip_h = true
 	position.x += curr_speed * delta * 60
 	position.x = clamp(position.x, min_position_x, max_position_x)
@@ -105,9 +99,6 @@ func _process_sideways_movement(delta):
 # ================================================
 # State Machine 
 # ================================================
-
-var _current_state = STATE_STANDING
-var _next_state = STATE_STANDING
 
 enum {
 	STATE_STANDING,
@@ -142,8 +133,6 @@ func _state_machine_process():
 		_stateFunctions[_current_state].exit.call_func()
 		_current_state = _next_state
 		_stateFunctions[_current_state].enter.call_func()
-	
-	
 
 
 # ================================================
@@ -157,6 +146,7 @@ func _state_machine_late_process():
 	_state_standing_transition_check_from_any_state()
 	_state_grabbing_transition_check_from_any_state()
 
+
 # ================================================
 # State: Standing
 # ================================================
@@ -164,27 +154,26 @@ func _state_machine_late_process():
 func _state_standing_transition_check_from_any_state():
 	pass
 
+
 func _state_standing_enter():
 	$AnimatedSprite.animation = "default"
 	jump_used_up = false
-	
-	
+
+
 func _state_standing_update():
 	_state_jumping_counter = 0
 	if Input.is_action_pressed("ui_up"):
 		_next_state = STATE_JUMPING
-	
-	
+
+
 func _state_standing_exit():
 	pass
-
 
 
 # ================================================
 # State: Jumping
 # ================================================
 
-var _state_jumping_counter_max = 20
 var _state_jumping_counter = 0
 
 
@@ -193,11 +182,11 @@ func _state_jumping_enter():
 	# _state_jumping_counter = 0
 	jump_used_up = true
 
-	
+
 func _state_jumping_update():
-	if (Input.is_action_pressed("ui_up") and (_state_jumping_counter < _state_jumping_counter_max)):
+	if (Input.is_action_pressed("ui_up") and (_state_jumping_counter < MAX_JUMPING_COUNTER)):
 		_state_jumping_counter += 1
-		position.y -= (_state_jumping_counter_max - _state_jumping_counter) * 2
+		position.y -= (MAX_JUMPING_COUNTER - _state_jumping_counter) * 2
 	else:
 		_next_state = STATE_FALLING
 
@@ -210,19 +199,18 @@ func _state_jumping_exit():
 # State: Falling
 # ================================================
 
-var _state_falling_counter = 0
-
 func _state_falling_enter():
 	# $AnimatedSprite.animation = "falling"
 	_state_falling_counter = 0
 
+
 func _state_falling_update():
 	_state_falling_counter += 1
-	position.y += speed_y_falling + _state_falling_counter / 5
+	position.y += SPEED_Y_FALLING + _state_falling_counter / 5
 	if (
 		Input.is_action_pressed("ui_up")
 		# and not jump_used_up
-		and _state_jumping_counter < _state_jumping_counter_max 
+		and _state_jumping_counter < MAX_JUMPING_COUNTER 
 	):
 		_next_state = STATE_JUMPING
 
@@ -241,7 +229,7 @@ func _state_grabbing_transition_check_from_any_state():
 		or the_balloon_im_holding != null
 	):
 		return
-		
+	
 	for area in get_overlapping_areas():
 		if (area.is_in_group("balloon") 
 			and area != the_balloon_im_still_jumping_from

@@ -24,7 +24,6 @@ var backgrounds: Array
 var background_height: int
 var players_current_background_region: int = 0
 
-
 func _ready():
 	
 	# ---------------------------------------------------------------------
@@ -149,17 +148,11 @@ func debug_print_bal_count():
 # Proccessing
 # ---------------------------------------------------------------------
 
-class MyCustomSorter:
-	static func sort(a, b):
-		if a.position.y > b.position.y:
-			return true
-		return false
-
-
 func _process(delta: float) -> void:
 	
 	reset_line = min(reset_line, $Player.position.y + DISTANCE_BETWEEN_PLAYER_AND_RESET_LINE)
 	$DeathLine.position.y = reset_line
+	
 	for child in get_children():
 		if child.is_in_group("balloon") and child.position.y > reset_line:
 			remove_child(child)
@@ -173,10 +166,20 @@ func _process(delta: float) -> void:
 	
 	current_score = -floor($Player.position.y / 1000) - 1
 	gui.set_score(current_score)
+
+
+func _physics_process(delta):
 	
-func _physics_process(delta: float) -> void:
-	pass
-	
+	# check to make sure there are starter balloons near the beginning,
+	# reset the game if the player has managed to lose their starter balloons.
+	if $Player.position.y > (-150):
+		var starter_ballon_exists = false
+		for child in get_children():
+			if child.is_in_group("balloon") and child.position.y > -700:
+				starter_ballon_exists = true
+				break
+		if !starter_ballon_exists:
+			gamereset()
 
 
 func print_debug_background_positions():
